@@ -1,0 +1,71 @@
+mdp
+// CONSTANTS 
+const int xSize = 9;
+const int ySize = 9;
+ 
+const int xGoal_min = 9;
+const int xGoal_max = 9;
+const int yGoal_min = 9;
+const int yGoal_max = 9;
+ 
+const int xObs0_min = 0;
+const int xObs0_max = 1;
+const int yObs0_min = 4;
+const int yObs0_max = 5;
+ 
+const int xObs1_min = 2;
+const int xObs1_max = 3;
+const int yObs1_min = 0;
+const int yObs1_max = 1;
+ 
+const int xObs2_min = 2;
+const int xObs2_max = 3;
+const int yObs2_min = 7;
+const int yObs2_max = 8;
+ 
+const int xObs3_min = 4;
+const int xObs3_max = 6;
+const int yObs3_min = 4;
+const int yObs3_max = 5;
+ 
+const int xObs4_min = 5;
+const int xObs4_max = 6;
+const int yObs4_min = 8;
+const int yObs4_max = 9;
+ 
+const int xObs5_min = 8;
+const int xObs5_max = 9;
+const int yObs5_min = 4;
+const int yObs5_max = 5;
+ 
+formula Cr = (xA>=xObs0_min & xA<=xObs0_max & yA>=yObs0_min & yA<=yObs0_max) | (xA>=xObs1_min & xA<=xObs1_max & yA>=yObs1_min & yA<=yObs1_max) | (xA>=xObs2_min & xA<=xObs2_max & yA>=yObs2_min & yA<=yObs2_max) | (xA>=xObs3_min & xA<=xObs3_max & yA>=yObs3_min & yA<=yObs3_max) | (xA>=xObs4_min & xA<=xObs4_max & yA>=yObs4_min & yA<=yObs4_max) | (xA>=xObs5_min & xA<=xObs5_max & yA>=yObs5_min & yA<=yObs5_max) ; 
+formula T = (xA>=xGoal_min & xA<=xGoal_max & yA>=yGoal_min & yA<=yGoal_max);
+
+module robot
+	 xA: [0..xSize] init 0;
+	 yA: [0..ySize] init 0;
+
+	[up] (yA < ySize & xA > 0 & xA< xSize & !T) -> 0.8:(yA'=yA+1) + 0.1:(yA'=yA+1)&(xA'=xA+1) + 0.1:(yA'=yA+1)&(xA'=xA-1);
+	[up] (yA < ySize & xA = 0 & !T) -> 0.8:(yA'=yA+1) + 0.1:(yA'=yA+1)&(xA'=xA+1) + 0.1:(yA'=yA)&(xA'=xA);
+	[up] (yA < ySize & xA = xSize & !T) -> 0.8:(yA'=yA+1) + 0.1:(yA'=yA)&(xA'=xA) + 0.1:(yA'=yA+1)&(xA'=xA-1);
+	[up] (yA = ySize & !T) -> 1:(yA'=yA);
+
+	[down] (yA > 0 & xA > 0 & xA< xSize & !T) -> 0.8:( yA'=yA-1) + 0.1:(yA'=yA-1)&(xA'=xA+1) + 0.1:(yA'=yA-1)&(xA'=xA-1);
+	[down] (yA > 0 & xA = 0 & !T) -> 0.8:( yA'=yA-1) + 0.1:(yA'=yA-1)&(xA'=xA+1) + 0.1:(yA'=yA)&(xA'=xA);
+	[down] (yA > 0 & xA = xSize & !T) -> 0.8:( yA'=yA-1) + 0.1:(yA'=yA)&(xA'=xA) + 0.1:(yA'=yA-1)&(xA'=xA-1);
+	[down] ( yA = 0 & !T) -> 1:(yA'=yA);
+
+	[right] (xA < xSize & yA > 0 & yA< ySize & !T) -> 0.8:(xA'=xA+1) + 0.1:(xA'=xA+1)&(yA'=yA+1) + 0.1:(xA'=xA+1)&(yA'=yA-1);
+	[right] (xA < xSize & yA = 0 & !T) -> 0.8:(xA'=xA+1) + 0.1:(xA'=xA+1)&(yA'=yA+1) + 0.1:(xA'=xA)&(yA'=yA);
+	[right] (xA < xSize & yA = ySize & !T) -> 0.8:(xA'=xA+1) + 0.1:(xA'=xA)&(yA'=yA) + 0.1:(xA'=xA+1)&(yA'=yA-1);
+	[right] (xA = xSize & !T) -> 1:(xA'=xA);
+	 
+	[left] (xA > 0 & yA > 0 & yA< ySize & !T) -> 0.8:(xA'=xA-1) + 0.1:(xA'=xA-1)&(yA'=yA+1) + 0.1:(xA'=xA-1)&(yA'=yA-1);
+	[left] (xA > 0 & yA = 0 & !T) -> 0.8:(xA'=xA-1) + 0.1:(xA'=xA-1)&(yA'=yA+1) + 0.1:(xA'=xA)&(yA'=yA);
+	[left] (xA > 0 & yA = ySize & !T) -> 0.8:(xA'=xA-1) + 0.1:(xA'=xA)&(yA'=yA) + 0.1:(xA'=xA-1)&(yA'=yA-1);
+	[left] (xA = 0 & !T) -> 1:(xA'=xA); 
+	 
+	[done] T -> 1:true;
+endmodule
+
+
